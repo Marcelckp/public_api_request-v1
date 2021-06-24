@@ -1,9 +1,9 @@
 let profiles;
 let index = 0;
 
-//FETCH 
+//FETCH CALL
 
-fetchData('https://randomuser.me/api/?results=12&nat=us')
+fetchData('https://randomuser.me/api/?results=12&nat=us');
 
 
 
@@ -12,19 +12,19 @@ fetchData('https://randomuser.me/api/?results=12&nat=us')
 async function fetchData(url) {
     const response = await fetch(url);
     //fetch will always pass and fail silently so this method handles if an error occurs
-    checkStatus(response)
+    checkStatus(response);
 
     const data = await response.json();
     profiles = data.results;
-    createGalleryMarkUp(data.results)
-    showModal(profiles)
+    createGalleryMarkUp(data.results);
+    showModal(profiles);
 }
 
 function checkStatus(response) {
     if (response) {
-        return Promise.resolve(response)
+        return Promise.resolve(response);
     } else {
-        return Promise.reject(new Error(response.statusText))
+        return Promise.reject(new Error(response.statusText));
     }
 }
 
@@ -45,16 +45,14 @@ function createGalleryMarkUp(data) {
                         <p class="card-text cap" data-index-number=${data.indexOf(item)}>${item.location.city}, ${item.location.state}</p>
                     </div>
                 </div>
-                `
+                `;
     })
     document.querySelector('#gallery').insertAdjacentHTML('beforeend', html.join(''));
 }
 
-
 function modalMarkUp(data) {
 
-    const phoneNum = data.phone.replace(/[-]/, ' ')
-        // console.log(phoneNum)
+    const phoneNum = data.phone.replace(/[-]/, ' ');
 
     const cards = `<div class="modal-container">
                         <div class="modal">
@@ -75,13 +73,9 @@ function modalMarkUp(data) {
                             <button type="button" id="modal-next" class="modal-next btn">Next</button>
                         </div>
                     </div>
-                    `
+                    `;
 
-
-
-
-
-    document.querySelector('#gallery').insertAdjacentHTML('afterend', cards)
+    document.querySelector('#gallery').insertAdjacentHTML('afterend', cards);
 
     const next = document.querySelector('#modal-next');
     const prev = document.querySelector('#modal-prev');
@@ -95,8 +89,8 @@ function modalMarkUp(data) {
      */
 
     close.addEventListener('click', () => {
-        const body = document.querySelector('body')
-        const divModalContainer = document.querySelector('.modal-container')
+        const body = document.querySelector('body');
+        const divModalContainer = document.querySelector('.modal-container');
         body.removeChild(divModalContainer);
     })
 
@@ -106,25 +100,35 @@ function modalMarkUp(data) {
      */
 
     next.addEventListener('click', () => {
-        body.removeChild(currentModal);
-        let nextEmp = +index + 1;
-        modalMarkUp(profiles[nextEmp])
-        index = nextEmp;
-        console.log(index)
-        if (index === 11) {
+
+        if (index < 11) {
+
+            body.removeChild(currentModal);
+            let nextEmp = +index + 1;
+            modalMarkUp(profiles[nextEmp]);
+            index = nextEmp;
+            console.log(index);
+
+        } else if (index === 11) {
             next.style.display = 'none';
         }
+
     })
 
     prev.addEventListener('click', () => {
-        body.removeChild(currentModal);
-        let previous = +index - 1;
-        modalMarkUp(profiles[previous])
-        index = previous;
-        console.log(index)
-        if (index === 0) {
+
+        if (index > 0) {
+
+            body.removeChild(currentModal);
+            let previous = +index - 1;
+            modalMarkUp(profiles[previous]);
+            index = previous;
+            console.log(index);
+
+        } else if (index === 0) {
             prev.style.display = 'none';
         }
+
     })
 }
 
@@ -136,16 +140,16 @@ function showModal(data) {
     for (let i = 0; i < cardSet.length; i++) {
         cardSet[i].addEventListener('click', (event) => {
             index = parseInt(event.target.dataset.indexNumber);
-            console.log(index)
+            console.log(index);
             modalMarkUp(data[index]);
             if (index === 0) {
                 const prevBtn = document.querySelector('.modal-prev');
                 prevBtn.style.display = 'none';
-                console.log('beginning')
+                console.log('beginning');
             } else if (index === 11) {
                 const nextBtn = document.querySelector('.modal-next');
                 nextBtn.style.display = 'none';
-                console.log('end')
+                console.log('end');
             }
         })
     }
