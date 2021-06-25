@@ -5,8 +5,6 @@ let index = 0;
 
 fetchData('https://randomuser.me/api/?results=12&nat=us');
 
-
-
 //----------------------------------------------------------------------------------------------
 //HELPER FUNCTIONS
 async function fetchData(url) {
@@ -82,6 +80,7 @@ function modalMarkUp(data) {
     const close = document.querySelector('.modal-close-btn');
     const body = document.querySelector('body');
     const currentModal = document.querySelector('.modal-container');
+    const cardSet = document.querySelectorAll('.card');
 
     /**
      * create a event listener to close the modal when the close ( X ) button is clicked
@@ -100,36 +99,40 @@ function modalMarkUp(data) {
      */
 
     next.addEventListener('click', () => {
-
-        if (index < 11) {
+        // debugger
+        if (index < cardSet.length - 1) {
 
             body.removeChild(currentModal);
-            let nextEmp = +index + 1;
-            modalMarkUp(profiles[nextEmp]);
-            index = nextEmp;
-            console.log(index);
+            index = +index + 1;
 
-        } else if (index === 11) {
+            modalMarkUp(profiles[index]);
+            // console.log(index);
+
+        }
+        if (index === cardSet.length - 1) {
             next.style.display = 'none';
         }
-
     })
 
     prev.addEventListener('click', () => {
-
+        // debugger
         if (index > 0) {
 
             body.removeChild(currentModal);
-            let previous = +index - 1;
-            modalMarkUp(profiles[previous]);
-            index = previous;
-            console.log(index);
+            index = +index - 1;
 
-        } else if (index === 0) {
-            prev.style.display = 'none';
+            modalMarkUp(profiles[index]);
+            // console.log(index);
+
         }
 
     })
+
+    if (index === 0) {
+        prev.style.display = 'none';
+    } else if (index === cardSet.length - 1) {
+        next.style.display = 'none'
+    }
 }
 
 function showModal(data) {
