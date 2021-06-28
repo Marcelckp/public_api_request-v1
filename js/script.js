@@ -1,29 +1,47 @@
+//----------------------------------------------------------------
+//                      Global Variables
+//----------------------------------------------------------------
+
+
 let profiles;
 let index = 0;
 
-//FETCH CALL
+
+//----------------------------------------------------------------
+//                         FETCH CALL
+//----------------------------------------------------------------
 
 fetchData('https://randomuser.me/api/?results=12&nat=us');
 
-//----------------------------------------------------------------------------------------------
-//HELPER FUNCTIONS
+
+//----------------------------------------------------------------------------------------------------------------------
+//                                              HELPER FUNCTIONS
+//----------------------------------------------------------------------------------------------------------------------
+
 async function fetchData(url) {
+
     const response = await fetch(url);
     //fetch will always pass and fail silently so this method handles if an error occurs
+
     checkStatus(response);
 
     const data = await response.json();
     profiles = data.results;
+
     createGalleryMarkUp(data.results);
     showModal(profiles);
+    getMatches();
+
 }
 
 function checkStatus(response) {
+
     if (response) {
         return Promise.resolve(response);
     } else {
         return Promise.reject(new Error(response.statusText));
     }
+
 }
 
 function createGalleryMarkUp(data) {
@@ -45,6 +63,7 @@ function createGalleryMarkUp(data) {
                 </div>
                 `;
     })
+
     document.querySelector('#gallery').insertAdjacentHTML('beforeend', html.join(''));
 }
 
@@ -88,9 +107,11 @@ function modalMarkUp(data) {
      */
 
     close.addEventListener('click', () => {
+
         const body = document.querySelector('body');
         const divModalContainer = document.querySelector('.modal-container');
         body.removeChild(divModalContainer);
+
     })
 
     /**
@@ -142,17 +163,23 @@ function showModal(data) {
 
     for (let i = 0; i < cardSet.length; i++) {
         cardSet[i].addEventListener('click', (event) => {
+
             index = parseInt(event.target.dataset.indexNumber);
-            console.log(index);
+            // console.log(index);
             modalMarkUp(data[index]);
+
             if (index === 0) {
+
                 const prevBtn = document.querySelector('.modal-prev');
                 prevBtn.style.display = 'none';
                 console.log('beginning');
+
             } else if (index === 11) {
+
                 const nextBtn = document.querySelector('.modal-next');
                 nextBtn.style.display = 'none';
                 console.log('end');
+
             }
         })
     }
@@ -161,14 +188,10 @@ function showModal(data) {
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
+//                                                       Search Bar
+//----------------------------------------------------------------------------------------------------------------------
 
-
-//----------------
-//   Search Bar
-//----------------
-
-// let profileArr = [];
-// console.log(profileArr)
 
 const searchDiv = document.querySelector('.search-container');
 const searchHtml = ` <form action = "#" method = "get">
@@ -178,19 +201,57 @@ const searchHtml = ` <form action = "#" method = "get">
                     `;
 searchDiv.insertAdjacentHTML('beforeend', searchHtml);
 
-// function getMatches() {
 
-//     let returnArr = [];
-//     event.preventDefault();
-//     profileArr.forEach((name) => {
-//         if (name.toLowerCase().includes(event.target.value)) returnArr.push(name);
-//     })
-//     if (returnArr.length === 0) {
+function getMatches() {
 
-//     }
-// }
+    document.querySelector('.search-input').addEventListener('keyup', (event) => {
+        let returnArr = [];
 
-// const searchInput = document.querySelector('#search-input');
-// searchInput.addEventListener('keyup', (event) => {
-//     getMatches()
-// })
+        event.preventDefault();
+        // console.log(event.target.value)
+        profiles.forEach((pro) => {
+            // console.log(pro.name.first, pro.name.last)
+            if (pro.name.first.toLowerCase().includes(event.target.value.toLowerCase()) || pro.name.last.toLowerCase().includes(event.target.value.toLowerCase())) {
+                returnArr.push(pro)
+            }
+
+        })
+
+        // console.log(returnArr)
+
+        if (returnArr.length === 0) {
+            document.querySelector('.gallery').innerHTML = '<h3>No Results Have Been Found</h3>';
+        };
+        if (returnArr.length > 0) {
+            document.querySelector('.gallery').innerHTML = '';
+            createGalleryMarkUp(returnArr);
+            showModal(returnArr)
+        }
+    })
+
+    document.querySelector('.search-submit').addEventListener('click', (event) => {
+        let returnArr = [];
+
+        event.preventDefault();
+        // console.log(event.target.value)
+        profiles.forEach((pro) => {
+            // console.log(pro.name.first, pro.name.last)
+            if (pro.name.first.toLowerCase().includes(event.target.value.toLowerCase()) || pro.name.last.toLowerCase().includes(event.target.value.toLowerCase())) {
+                returnArr.push(pro)
+            }
+
+        })
+
+        // console.log(returnArr)
+
+        if (returnArr.length === 0) {
+            document.querySelector('.gallery').innerHTML = '<h3>No Results Have Been Found</h3>';
+        };
+        if (returnArr.length > 0) {
+            document.querySelector('.gallery').innerHTML = '';
+            createGalleryMarkUp(returnArr);
+            showModal(returnArr)
+        }
+    })
+
+}
